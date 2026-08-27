@@ -68,25 +68,10 @@ export function AuthProvider({ children }) {
     return sendPasswordResetEmail(auth, email);
   }
 
-  function verifyOwnerPin(pin) {
-    if (String(pin).trim() === DEFAULT_OWNER_PIN || String(pin).trim().toLowerCase() === 'rrvadmin') {
-      setIsOwnerVerified(true);
-      localStorage.setItem('rrv_owner_verified', 'true');
-      return true;
-    }
-    return false;
-  }
-
-  function revokeOwnerAccess() {
-    setIsOwnerVerified(false);
-    localStorage.removeItem('rrv_owner_verified');
-  }
-
-  // Check if current user is owner either by email or by owner PIN verification
-  const isOwnerEmail = !!currentUser?.email && OWNER_EMAILS.some(
+  // Strictly check if current logged-in user is the owner (subhamrajbholu@gmail.com)
+  const isOwner = !!currentUser?.email && OWNER_EMAILS.some(
     (e) => e.toLowerCase() === currentUser.email.toLowerCase()
   );
-  const isOwner = isOwnerEmail || isOwnerVerified;
 
   const value = {
     currentUser,
@@ -95,9 +80,7 @@ export function AuthProvider({ children }) {
     logout,
     forgotPassword,
     isAuthenticated: !!currentUser,
-    isOwner,
-    verifyOwnerPin,
-    revokeOwnerAccess
+    isOwner
   };
 
   return (

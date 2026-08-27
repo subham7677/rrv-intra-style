@@ -106,8 +106,8 @@ export default function Header({ onOpenCart, onOpenAuth, onOpenHistory }) {
                 </div>
               ) : null}
 
-              {/* ADMIN PRODUCT MANAGEMENT OPTION - ONLY SHOWN IF OWNER */}
-              {isOwner ? (
+              {/* ADMIN PRODUCT MANAGEMENT OPTION - ONLY SHOWN TO LOGGED-IN OWNER (subhamrajbholu@gmail.com) */}
+              {isOwner && (
                 <button
                   className="dropdown-item admin-menu-item"
                   onClick={() => {
@@ -117,17 +117,6 @@ export default function Header({ onOpenCart, onOpenAuth, onOpenHistory }) {
                 >
                   <SlidersHorizontal size={16} />
                   <span>Manage Products (Owner)</span>
-                </button>
-              ) : (
-                <button
-                  className="dropdown-item owner-access-item"
-                  onClick={() => {
-                    setDropdownOpen(false);
-                    openAdmin(null);
-                  }}
-                >
-                  <KeyRound size={16} />
-                  <span>Owner Login</span>
                 </button>
               )}
 

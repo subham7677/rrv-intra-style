@@ -142,10 +142,10 @@ export const STORE_LOCATION = "Ram Nagar, Masaurhi (Patna)";
 
 // 🔐 OWNER & ADMIN CONFIGURATION
 export const OWNER_EMAILS = [
-  "subhamrajbholu@gmail.com",
-  "rrvintrastyle@gmail.com"
+  "subhamrajbholu@gmail.com"
 ];
 
 // Default Owner Secret Access Password / PIN
 export const DEFAULT_OWNER_PIN = "Subham@7677";
+
 

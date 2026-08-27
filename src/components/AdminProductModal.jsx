@@ -15,10 +15,7 @@ import {
   Package,
   Layers,
   ArrowLeft,
-  ShieldCheck,
-  Lock,
-  KeyRound,
-  LogOut
+  ShieldCheck
 } from 'lucide-react';
 import { useProducts } from '../context/ProductContext';
 import { useAuth } from '../context/AuthContext';
@@ -37,17 +34,13 @@ export default function AdminProductModal() {
     closeAdmin
   } = useProducts();
 
-  const { isOwner, verifyOwnerPin, revokeOwnerAccess, currentUser } = useAuth();
+  const { isOwner } = useAuth();
   const { addToast } = useToast();
 
   const [activeTab, setActiveTab] = useState('list'); // 'list' | 'form'
   const [searchTerm, setSearchTerm] = useState('');
   const [filterCategory, setFilterCategory] = useState('All');
   const [deleteConfirmId, setDeleteConfirmId] = useState(null);
-
-  // Owner PIN Auth state
-  const [pinInput, setPinInput] = useState('');
-  const [pinError, setPinError] = useState('');
 
   // Form states
   const [editingId, setEditingId] = useState(null);
@@ -296,70 +289,9 @@ export default function AdminProductModal() {
     return matchesCat && matchesQuery;
   });
 
-  // ==========================================
-  // IF USER IS NOT OWNER: DISPLAY OWNER LOGIN / PIN PROMPT
-  // ==========================================
+  // Only allow owner to view admin modal
   if (!isOwner) {
-    return (
-      <div className="modal-backdrop animate-fade-in" onClick={closeAdmin}>
-        <div
-          className="modal-auth-dialog animate-scale-up"
-          onClick={(e) => e.stopPropagation()}
-          role="dialog"
-          aria-modal="true"
-        >
-          <button className="modal-close-btn auth-close-pos" onClick={closeAdmin} aria-label="Close">
-            <X size={20} />
-          </button>
-
-          <div className="auth-header">
-            <div className="auth-icon-circle" style={{ background: '#fef3c7', color: '#d97706' }}>
-              <Lock size={26} />
-            </div>
-            <h3 className="auth-title">Owner Access Required</h3>
-            <p className="auth-subtitle">
-              Only the website owner can manage, add, edit, or delete products.
-            </p>
-          </div>
-
-          <form onSubmit={handleVerifyPin} className="auth-form">
-            {pinError && <div className="auth-error-banner">{pinError}</div>}
-
-            <div className="form-group">
-              <label className="form-label">Owner Secret PIN / Passcode</label>
-              <div className="input-icon-wrapper">
-                <KeyRound size={18} className="field-icon" />
-                <input
-                  type="password"
-                  placeholder="Enter owner password (Subham@7677)"
-                  value={pinInput}
-                  onChange={(e) => setPinInput(e.target.value)}
-                  className="form-input"
-                  autoFocus
-                />
-              </div>
-              <span style={{ fontSize: '11px', color: '#94a3b8', marginTop: '4px' }}>
-                Tip: Signing in with owner email (subhamrajbholu@gmail.com) also grants instant access.
-              </span>
-            </div>
-
-            <button type="submit" className="btn-auth-submit" style={{ background: 'linear-gradient(135deg, #d97706 0%, #b45309 100%)' }}>
-              <ShieldCheck size={18} style={{ marginRight: '6px' }} />
-              <span>Verify & Access Admin</span>
-            </button>
-          </form>
-
-          <div className="auth-switch-footer">
-            <p>
-              Not the store owner?{' '}
-              <button type="button" className="link-highlight" onClick={closeAdmin}>
-                Return to Store
-              </button>
-            </p>
-          </div>
-        </div>
-      </div>
-    );
+    return null;
   }
 
   // ==========================================
