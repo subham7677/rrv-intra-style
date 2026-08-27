@@ -2,9 +2,12 @@ import React, { useState } from 'react';
 import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 import { HistoryProvider } from './context/HistoryContext';
+import { ProductProvider } from './context/ProductContext';
 import { ToastProvider } from './components/Toast';
 import Header from './components/Header';
 import ProductList from './components/ProductList';
+import ProductDetailModal from './components/ProductDetailModal';
+import AdminProductModal from './components/AdminProductModal';
 import CartModal from './components/CartModal';
 import HistoryModal from './components/HistoryModal';
 import AuthModal from './components/AuthModal';
@@ -67,6 +70,10 @@ function MainApp() {
       <Footer onScrollToTop={scrollToTop} />
 
       {/* MODALS */}
+      <ProductDetailModal onRequireAuth={handleOpenAuth} />
+
+      <AdminProductModal />
+
       <CartModal
         isOpen={isCartOpen}
         onClose={() => setIsCartOpen(false)}
@@ -90,13 +97,15 @@ function MainApp() {
 export default function App() {
   return (
     <AuthProvider>
-      <CartProvider>
-        <HistoryProvider>
-          <ToastProvider>
-            <MainApp />
-          </ToastProvider>
-        </HistoryProvider>
-      </CartProvider>
+      <ProductProvider>
+        <CartProvider>
+          <HistoryProvider>
+            <ToastProvider>
+              <MainApp />
+            </ToastProvider>
+          </HistoryProvider>
+        </CartProvider>
+      </ProductProvider>
     </AuthProvider>
   );
 }

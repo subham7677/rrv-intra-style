@@ -1,23 +1,35 @@
 import React, { useState } from 'react';
-import { ChevronLeft, ChevronRight, ShoppingCart, MessageCircle, Check } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ShoppingCart, MessageCircle, Check, Star, Eye } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useHistory } from '../context/HistoryContext';
 import { useAuth } from '../context/AuthContext';
+import { useProducts } from '../context/ProductContext';
 import { useToast } from './Toast';
 import { STORE_PHONE } from '../data/products';
 
 export default function ProductCard({ product, onRequireAuth }) {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [selectedSize, setSelectedSize] = useState(product.sizes[0] || 'Standard');
+  const sizes = Array.isArray(product.sizes) && product.sizes.length > 0 ? product.sizes : ['Standard'];
+  const [selectedSize, setSelectedSize] = useState(sizes[0]);
   const [quantity, setQuantity] = useState(1);
   const [isAdded, setIsAdded] = useState(false);
 
   const { addToCart } = useCart();
   const { addOrder } = useHistory();
   const { isAuthenticated } = useAuth();
+  const { openProductDetail } = useProducts();
   const { addToast } = useToast();
 
-  const totalSlides = product.images.length;
+  const images = Array.isArray(product.images) && product.images.length > 0 ? product.images : ['/logo.jpeg'];
+  const totalSlides = images.length;
+
+  const discountPercent =
+    product.oldPrice && product.oldPrice > product.price
+      ? Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100)
+      : null;
+
+  const rating = product.rating !== undefined ? product.rating : 4.9;
+  const stock = product.stock !== undefined ? product.stock : 50;
 
   const nextSlide = (e) => {
     e.stopPropagation();
@@ -29,14 +41,20 @@ export default function ProductCard({ product, onRequireAuth }) {
     setCurrentSlide((prev) => (prev - 1 + totalSlides) % totalSlides);
   };
 
-  const handleAddToCart = () => {
+  const handleCardClick = () => {
+    openProductDetail(product);
+  };
+
+  const handleAddToCart = (e) => {
+    e.stopPropagation();
     addToCart(product, selectedSize, quantity);
     setIsAdded(true);
     addToast(`${product.name} added to cart!`, 'success');
     setTimeout(() => setIsAdded(false), 1500);
   };
 
-  const handleWhatsAppOrder = () => {
+  const handleWhatsAppOrder = (e) => {
+    e.stopPropagation();
     if (!isAuthenticated) {
       addToast('Please login first to order', 'error');
       if (onRequireAuth) onRequireAuth('login');
@@ -61,17 +79,35 @@ export default function ProductCard({ product, onRequireAuth }) {
   };
 
   return (
-    <div className="product-card">
+    <div className="product-card" onClick={handleCardClick}>
       {/* IMAGE SLIDER */}
       <div className="slider-wrapper">
         <div className="slider-image-box">
           <img
-            src={product.images[currentSlide]}
+            src={images[currentSlide]}
             alt={`${product.name} image ${currentSlide + 1}`}
             className="slider-image"
             loading="lazy"
           />
         </div>
+
+        {/* DISCOUNT BADGE */}
+        {discountPercent && (
+          <span className="card-discount-badge">{discountPercent}% OFF</span>
+        )}
+
+        {/* QUICK VIEW HOVER BUTTON */}
+        <button
+          className="card-quick-view-btn"
+          onClick={(e) => {
+            e.stopPropagation();
+            openProductDetail(product);
+          }}
+          title="View product details"
+        >
+          <Eye size={15} />
+          <span>Quick View</span>
+        </button>
 
         {totalSlides > 1 && (
           <>
@@ -82,11 +118,14 @@ export default function ProductCard({ product, onRequireAuth }) {
               <ChevronRight size={18} />
             </button>
             <div className="slider-dots">
-              {product.images.map((_, idx) => (
+              {images.map((_, idx) => (
                 <span
                   key={idx}
                   className={`dot ${idx === currentSlide ? 'active' : ''}`}
-                  onClick={() => setCurrentSlide(idx)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setCurrentSlide(idx);
+                  }}
                 />
               ))}
             </div>
@@ -96,13 +135,33 @@ export default function ProductCard({ product, onRequireAuth }) {
 
       {/* PRODUCT DETAILS */}
       <div className="product-details">
+        {/* RATING & STOCK ROW */}
+        <div className="card-meta-row">
+          <div className="card-rating-wrap">
+            <Star size={13} className="star-filled" />
+            <span className="card-rating-text">{Number(rating).toFixed(1)}</span>
+          </div>
+          {stock <= 5 && stock > 0 && (
+            <span className="card-stock-warning">Only {stock} left!</span>
+          )}
+        </div>
+
         <h3 className="product-title" title={product.name}>
           {product.name}
         </h3>
-        <p className="product-price">₹{product.price.toLocaleString('en-IN')}</p>
+
+        {/* PRICE DISPLAY */}
+        <div className="card-price-row">
+          <span className="product-price">₹{product.price.toLocaleString('en-IN')}</span>
+          {product.oldPrice && product.oldPrice > product.price && (
+            <span className="product-old-price">
+              ₹{Number(product.oldPrice).toLocaleString('en-IN')}
+            </span>
+          )}
+        </div>
 
         {/* CONTROLS (SIZE & QUANTITY) */}
-        <div className="product-controls">
+        <div className="product-controls" onClick={(e) => e.stopPropagation()}>
           <div className="control-group">
             <label className="control-label">Size</label>
             <select
@@ -110,7 +169,7 @@ export default function ProductCard({ product, onRequireAuth }) {
               value={selectedSize}
               onChange={(e) => setSelectedSize(e.target.value)}
             >
-              {product.sizes.map((s) => (
+              {sizes.map((s) => (
                 <option key={s} value={s}>
                   {s}
                 </option>
@@ -123,7 +182,7 @@ export default function ProductCard({ product, onRequireAuth }) {
             <input
               type="number"
               min="1"
-              max="99"
+              max={Math.max(1, stock)}
               value={quantity}
               onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
               className="product-qty-input"
@@ -132,10 +191,11 @@ export default function ProductCard({ product, onRequireAuth }) {
         </div>
 
         {/* ACTION BUTTONS */}
-        <div className="product-actions">
+        <div className="product-actions" onClick={(e) => e.stopPropagation()}>
           <button
             className={`btn-add-cart ${isAdded ? 'added' : ''}`}
             onClick={handleAddToCart}
+            disabled={stock <= 0}
           >
             {isAdded ? (
               <>
@@ -150,7 +210,11 @@ export default function ProductCard({ product, onRequireAuth }) {
             )}
           </button>
 
-          <button className="btn-order-wa" onClick={handleWhatsAppOrder}>
+          <button
+            className="btn-order-wa"
+            onClick={handleWhatsAppOrder}
+            disabled={stock <= 0}
+          >
             <MessageCircle size={16} />
             <span>Order on WhatsApp</span>
           </button>

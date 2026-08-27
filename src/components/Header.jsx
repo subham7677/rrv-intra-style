@@ -1,13 +1,25 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ShoppingBag, MoreVertical, LogIn, UserPlus, LogOut, History, User } from 'lucide-react';
+import {
+  ShoppingBag,
+  MoreVertical,
+  LogIn,
+  UserPlus,
+  LogOut,
+  History,
+  User,
+  SlidersHorizontal,
+  PlusCircle
+} from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
+import { useProducts } from '../context/ProductContext';
 import { useToast } from './Toast';
 
 export default function Header({ onOpenCart, onOpenAuth, onOpenHistory }) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const { currentUser, logout, isAuthenticated } = useAuth();
   const { getCartCount } = useCart();
+  const { openAdmin } = useProducts();
   const { addToast } = useToast();
   const dropdownRef = useRef(null);
 
@@ -46,6 +58,16 @@ export default function Header({ onOpenCart, onOpenAuth, onOpenHistory }) {
 
       {/* RIGHT ACTION CONTROLS */}
       <div className="header-right">
+        {/* ADMIN MANAGE PRODUCTS QUICK BUTTON */}
+        <button
+          className="header-admin-btn"
+          onClick={() => openAdmin(null)}
+          title="Product Management System"
+        >
+          <SlidersHorizontal size={17} />
+          <span className="header-admin-text">Admin</span>
+        </button>
+
         {/* CART BUTTON */}
         <button className="cart-badge-btn" onClick={onOpenCart} title="Open Shopping Cart">
           <ShoppingBag size={19} className="cart-icon" />
@@ -78,6 +100,18 @@ export default function Header({ onOpenCart, onOpenAuth, onOpenHistory }) {
                   </div>
                 </div>
               ) : null}
+
+              {/* ADMIN PRODUCT MANAGEMENT OPTION */}
+              <button
+                className="dropdown-item admin-menu-item"
+                onClick={() => {
+                  setDropdownOpen(false);
+                  openAdmin(null);
+                }}
+              >
+                <SlidersHorizontal size={16} />
+                <span>Manage Products</span>
+              </button>
 
               <button
                 className="dropdown-item"
