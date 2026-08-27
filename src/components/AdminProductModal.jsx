@@ -14,9 +14,14 @@ import {
   Star,
   Package,
   Layers,
-  ArrowLeft
+  ArrowLeft,
+  ShieldCheck,
+  Lock,
+  KeyRound,
+  LogOut
 } from 'lucide-react';
 import { useProducts } from '../context/ProductContext';
+import { useAuth } from '../context/AuthContext';
 import { useToast } from './Toast';
 
 export default function AdminProductModal() {
@@ -32,12 +37,17 @@ export default function AdminProductModal() {
     closeAdmin
   } = useProducts();
 
+  const { isOwner, verifyOwnerPin, revokeOwnerAccess, currentUser } = useAuth();
   const { addToast } = useToast();
 
   const [activeTab, setActiveTab] = useState('list'); // 'list' | 'form'
   const [searchTerm, setSearchTerm] = useState('');
   const [filterCategory, setFilterCategory] = useState('All');
   const [deleteConfirmId, setDeleteConfirmId] = useState(null);
+
+  // Owner PIN Auth state
+  const [pinInput, setPinInput] = useState('');
+  const [pinError, setPinError] = useState('');
 
   // Form states
   const [editingId, setEditingId] = useState(null);
@@ -58,7 +68,7 @@ export default function AdminProductModal() {
 
   const fileInputRef = useRef(null);
 
-  // When adminEditingProduct changes (e.g. opened directly from ProductDetailModal or header)
+  // When adminEditingProduct changes
   useEffect(() => {
     if (adminEditingProduct) {
       populateFormForEdit(adminEditingProduct);
@@ -114,6 +124,25 @@ export default function AdminProductModal() {
     setActiveTab('form');
   }
 
+  const handleVerifyPin = (e) => {
+    e.preventDefault();
+    setPinError('');
+
+    if (!pinInput) {
+      setPinError('Please enter owner access PIN');
+      return;
+    }
+
+    const success = verifyOwnerPin(pinInput);
+    if (success) {
+      addToast('Owner access verified successfully!', 'success');
+      setPinInput('');
+      setPinError('');
+    } else {
+      setPinError('Incorrect owner PIN. Please try again.');
+    }
+  };
+
   const handleOpenAddForm = () => {
     resetForm();
     setActiveTab('form');
@@ -129,7 +158,6 @@ export default function AdminProductModal() {
         return;
       }
 
-      // Max file size 8MB
       if (file.size > 8 * 1024 * 1024) {
         addToast(`Image "${file.name}" exceeds 8MB limit`, 'error');
         return;
@@ -143,7 +171,6 @@ export default function AdminProductModal() {
       reader.readAsDataURL(file);
     });
 
-    // Reset input
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
@@ -269,6 +296,75 @@ export default function AdminProductModal() {
     return matchesCat && matchesQuery;
   });
 
+  // ==========================================
+  // IF USER IS NOT OWNER: DISPLAY OWNER LOGIN / PIN PROMPT
+  // ==========================================
+  if (!isOwner) {
+    return (
+      <div className="modal-backdrop animate-fade-in" onClick={closeAdmin}>
+        <div
+          className="modal-auth-dialog animate-scale-up"
+          onClick={(e) => e.stopPropagation()}
+          role="dialog"
+          aria-modal="true"
+        >
+          <button className="modal-close-btn auth-close-pos" onClick={closeAdmin} aria-label="Close">
+            <X size={20} />
+          </button>
+
+          <div className="auth-header">
+            <div className="auth-icon-circle" style={{ background: '#fef3c7', color: '#d97706' }}>
+              <Lock size={26} />
+            </div>
+            <h3 className="auth-title">Owner Access Required</h3>
+            <p className="auth-subtitle">
+              Only the website owner can manage, add, edit, or delete products.
+            </p>
+          </div>
+
+          <form onSubmit={handleVerifyPin} className="auth-form">
+            {pinError && <div className="auth-error-banner">{pinError}</div>}
+
+            <div className="form-group">
+              <label className="form-label">Owner Secret PIN / Passcode</label>
+              <div className="input-icon-wrapper">
+                <KeyRound size={18} className="field-icon" />
+                <input
+                  type="password"
+                  placeholder="Enter owner PIN (e.g. 7677)"
+                  value={pinInput}
+                  onChange={(e) => setPinInput(e.target.value)}
+                  className="form-input"
+                  autoFocus
+                />
+              </div>
+              <span style={{ fontSize: '11px', color: '#94a3b8', marginTop: '4px' }}>
+                Tip: Signing in with owner email (rrvintrastyle@gmail.com / subham7677@gmail.com) also grants instant access.
+              </span>
+            </div>
+
+            <button type="submit" className="btn-auth-submit" style={{ background: 'linear-gradient(135deg, #d97706 0%, #b45309 100%)' }}>
+              <ShieldCheck size={18} style={{ marginRight: '6px' }} />
+              <span>Verify & Access Admin</span>
+            </button>
+          </form>
+
+          <div className="auth-switch-footer">
+            <p>
+              Not the store owner?{' '}
+              <button type="button" className="link-highlight" onClick={closeAdmin}>
+                Return to Store
+              </button>
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ==========================================
+  // IF USER IS OWNER: DISPLAY FULL ADMIN PANEL
+  // ==========================================
   return (
     <div className="modal-backdrop animate-fade-in" onClick={closeAdmin}>
       <div
@@ -281,8 +377,8 @@ export default function AdminProductModal() {
         <div className="admin-modal-header">
           <div className="admin-header-title-wrap">
             <div className="admin-title-badge">
-              <Layers size={18} />
-              <span>Admin Panel</span>
+              <ShieldCheck size={18} />
+              <span>Owner Panel</span>
             </div>
             <h3 className="admin-modal-title">Product Management System</h3>
           </div>

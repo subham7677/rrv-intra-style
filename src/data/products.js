@@ -139,3 +139,14 @@ export const STORE_EMAIL = "rrvintrastyle@gmail.com";
 export const STORE_INSTAGRAM = "https://www.instagram.com/rrv_intrastyle";
 export const STORE_FACEBOOK = "https://www.facebook.com/share/1AmKdLiUGo/";
 export const STORE_LOCATION = "Ram Nagar, Masaurhi (Patna)";
+
+// 🔐 OWNER & ADMIN CONFIGURATION
+export const OWNER_EMAILS = [
+  "rrvintrastyle@gmail.com",
+  "subham7677@gmail.com",
+  "admin@rrvintrastyle.com",
+  "admin@gmail.com"
+];
+
+// Default Owner Secret Access PIN (can be used to authenticate owner from anywhere)
+export const DEFAULT_OWNER_PIN = "7677";

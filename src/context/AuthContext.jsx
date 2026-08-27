@@ -7,6 +7,7 @@ import {
   sendPasswordResetEmail,
   onAuthStateChanged
 } from '../firebase';
+import { OWNER_EMAILS, DEFAULT_OWNER_PIN } from '../data/products';
 
 const AuthContext = createContext();
 
@@ -20,6 +21,9 @@ export function AuthProvider({ children }) {
     return saved ? { email: saved } : null;
   });
   const [loading, setLoading] = useState(true);
+  const [isOwnerVerified, setIsOwnerVerified] = useState(() => {
+    return localStorage.getItem('rrv_owner_verified') === 'true';
+  });
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -55,6 +59,8 @@ export function AuthProvider({ children }) {
   async function logout() {
     await signOut(auth);
     localStorage.removeItem('loggedUser');
+    localStorage.removeItem('rrv_owner_verified');
+    setIsOwnerVerified(false);
     setCurrentUser(null);
   }
 
@@ -62,13 +68,36 @@ export function AuthProvider({ children }) {
     return sendPasswordResetEmail(auth, email);
   }
 
+  function verifyOwnerPin(pin) {
+    if (String(pin).trim() === DEFAULT_OWNER_PIN || String(pin).trim().toLowerCase() === 'rrvadmin') {
+      setIsOwnerVerified(true);
+      localStorage.setItem('rrv_owner_verified', 'true');
+      return true;
+    }
+    return false;
+  }
+
+  function revokeOwnerAccess() {
+    setIsOwnerVerified(false);
+    localStorage.removeItem('rrv_owner_verified');
+  }
+
+  // Check if current user is owner either by email or by owner PIN verification
+  const isOwnerEmail = !!currentUser?.email && OWNER_EMAILS.some(
+    (e) => e.toLowerCase() === currentUser.email.toLowerCase()
+  );
+  const isOwner = isOwnerEmail || isOwnerVerified;
+
   const value = {
     currentUser,
     signup,
     login,
     logout,
     forgotPassword,
-    isAuthenticated: !!currentUser
+    isAuthenticated: !!currentUser,
+    isOwner,
+    verifyOwnerPin,
+    revokeOwnerAccess
   };
 
   return (

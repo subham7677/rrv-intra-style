@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
-import { Search, Sparkles, Plus, SlidersHorizontal } from 'lucide-react';
+import { Search, Sparkles, Plus } from 'lucide-react';
 import ProductCard from './ProductCard';
 import { useProducts } from '../context/ProductContext';
+import { useAuth } from '../context/AuthContext';
 
 export default function ProductList({ onRequireAuth }) {
   const { products, categories, openAdmin } = useProducts();
+  const { isOwner } = useAuth();
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -29,14 +31,16 @@ export default function ProductList({ onRequireAuth }) {
               <Sparkles size={22} className="sparkle-icon" />
               <span>Personalized Gifts & Decor</span>
             </h2>
-            <button
-              className="btn-header-add-product"
-              onClick={() => openAdmin(null)}
-              title="Add a new product to catalog"
-            >
-              <Plus size={16} />
-              <span>Add Product</span>
-            </button>
+            {isOwner && (
+              <button
+                className="btn-header-add-product"
+                onClick={() => openAdmin(null)}
+                title="Add a new product (Owner only)"
+              >
+                <Plus size={16} />
+                <span>Add Product</span>
+              </button>
+            )}
           </div>
           <p className="section-subtitle">
             Custom-made photo products crafted with love and precision • {products.length} products available
@@ -98,10 +102,12 @@ export default function ProductList({ onRequireAuth }) {
             >
               View All Products
             </button>
-            <button className="btn-empty-add-prod" onClick={() => openAdmin(null)}>
-              <Plus size={16} />
-              <span>Add New Product</span>
-            </button>
+            {isOwner && (
+              <button className="btn-empty-add-prod" onClick={() => openAdmin(null)}>
+                <Plus size={16} />
+                <span>Add New Product</span>
+              </button>
+            )}
           </div>
         </div>
       )}

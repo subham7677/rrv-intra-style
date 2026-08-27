@@ -8,7 +8,8 @@ import {
   History,
   User,
   SlidersHorizontal,
-  PlusCircle
+  ShieldCheck,
+  KeyRound
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
@@ -17,7 +18,7 @@ import { useToast } from './Toast';
 
 export default function Header({ onOpenCart, onOpenAuth, onOpenHistory }) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const { currentUser, logout, isAuthenticated } = useAuth();
+  const { currentUser, logout, isAuthenticated, isOwner } = useAuth();
   const { getCartCount } = useCart();
   const { openAdmin } = useProducts();
   const { addToast } = useToast();
@@ -58,15 +59,17 @@ export default function Header({ onOpenCart, onOpenAuth, onOpenHistory }) {
 
       {/* RIGHT ACTION CONTROLS */}
       <div className="header-right">
-        {/* ADMIN MANAGE PRODUCTS QUICK BUTTON */}
-        <button
-          className="header-admin-btn"
-          onClick={() => openAdmin(null)}
-          title="Product Management System"
-        >
-          <SlidersHorizontal size={17} />
-          <span className="header-admin-text">Admin</span>
-        </button>
+        {/* ADMIN MANAGE PRODUCTS BUTTON - ONLY VISIBLE TO OWNER */}
+        {isOwner && (
+          <button
+            className="header-admin-btn"
+            onClick={() => openAdmin(null)}
+            title="Owner Product Management"
+          >
+            <ShieldCheck size={16} className="owner-icon-glow" />
+            <span className="header-admin-text">Owner Admin</span>
+          </button>
+        )}
 
         {/* CART BUTTON */}
         <button className="cart-badge-btn" onClick={onOpenCart} title="Open Shopping Cart">
@@ -93,7 +96,9 @@ export default function Header({ onOpenCart, onOpenAuth, onOpenHistory }) {
                     <User size={16} />
                   </div>
                   <div className="user-info-text">
-                    <span className="user-status-label">Signed in as</span>
+                    <span className="user-status-label">
+                      {isOwner ? 'Owner / Admin' : 'Signed in as'}
+                    </span>
                     <span className="user-email-text" title={currentUser.email}>
                       {currentUser.email}
                     </span>
@@ -101,17 +106,30 @@ export default function Header({ onOpenCart, onOpenAuth, onOpenHistory }) {
                 </div>
               ) : null}
 
-              {/* ADMIN PRODUCT MANAGEMENT OPTION */}
-              <button
-                className="dropdown-item admin-menu-item"
-                onClick={() => {
-                  setDropdownOpen(false);
-                  openAdmin(null);
-                }}
-              >
-                <SlidersHorizontal size={16} />
-                <span>Manage Products</span>
-              </button>
+              {/* ADMIN PRODUCT MANAGEMENT OPTION - ONLY SHOWN IF OWNER */}
+              {isOwner ? (
+                <button
+                  className="dropdown-item admin-menu-item"
+                  onClick={() => {
+                    setDropdownOpen(false);
+                    openAdmin(null);
+                  }}
+                >
+                  <SlidersHorizontal size={16} />
+                  <span>Manage Products (Owner)</span>
+                </button>
+              ) : (
+                <button
+                  className="dropdown-item owner-access-item"
+                  onClick={() => {
+                    setDropdownOpen(false);
+                    openAdmin(null);
+                  }}
+                >
+                  <KeyRound size={16} />
+                  <span>Owner Login</span>
+                </button>
+              )}
 
               <button
                 className="dropdown-item"

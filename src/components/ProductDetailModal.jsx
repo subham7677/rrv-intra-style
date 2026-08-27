@@ -23,6 +23,7 @@ import { STORE_PHONE } from '../data/products';
 
 export default function ProductDetailModal({ onRequireAuth }) {
   const { selectedProduct, closeProductDetail, openAdmin } = useProducts();
+  const { isOwner, isAuthenticated } = useAuth();
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [selectedSize, setSelectedSize] = useState('');
   const [quantity, setQuantity] = useState(1);
@@ -30,7 +31,6 @@ export default function ProductDetailModal({ onRequireAuth }) {
 
   const { addToCart } = useCart();
   const { addOrder } = useHistory();
-  const { isAuthenticated } = useAuth();
   const { addToast } = useToast();
 
   useEffect(() => {
@@ -209,14 +209,17 @@ export default function ProductDetailModal({ onRequireAuth }) {
                 </span>
               </div>
 
-              <button
-                className="btn-quick-edit"
-                onClick={handleEditProduct}
-                title="Edit this product in Admin"
-              >
-                <Edit3 size={14} />
-                <span>Edit Product</span>
-              </button>
+              {/* ONLY VISIBLE TO OWNER */}
+              {isOwner && (
+                <button
+                  className="btn-quick-edit"
+                  onClick={handleEditProduct}
+                  title="Edit this product in Admin (Owner only)"
+                >
+                  <Edit3 size={14} />
+                  <span>Edit Product</span>
+                </button>
+              )}
             </div>
 
             {/* TITLE */}
