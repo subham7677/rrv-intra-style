@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Order History</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h2 style="text-align:center;">Order History</h2>
+
+<div id="historyBox"></div>
+
+<script>
+
+let orders = JSON.parse(localStorage.getItem("history")) || [];
+
+let box = document.getElementById("historyBox");
+
+orders.forEach(order => {
+
+  box.innerHTML += `
+
+    <div class="card">
+      <h3>${order.product}</h3>
+      <p>Size: ${order.size}</p>
+      <p>Quantity: ${order.qty}</p>
+      <p>${order.time}</p>
+    </div>
+
+  `;
+
+});
+
+</script>
+
+</body>
+</html>

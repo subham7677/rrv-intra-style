@@ -1,0 +1,161 @@
+import React, { useState } from 'react';
+import { ChevronLeft, ChevronRight, ShoppingCart, MessageCircle, Check } from 'lucide-react';
+import { useCart } from '../context/CartContext';
+import { useHistory } from '../context/HistoryContext';
+import { useAuth } from '../context/AuthContext';
+import { useToast } from './Toast';
+import { STORE_PHONE } from '../data/products';
+
+export default function ProductCard({ product, onRequireAuth }) {
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [selectedSize, setSelectedSize] = useState(product.sizes[0] || 'Standard');
+  const [quantity, setQuantity] = useState(1);
+  const [isAdded, setIsAdded] = useState(false);
+
+  const { addToCart } = useCart();
+  const { addOrder } = useHistory();
+  const { isAuthenticated } = useAuth();
+  const { addToast } = useToast();
+
+  const totalSlides = product.images.length;
+
+  const nextSlide = (e) => {
+    e.stopPropagation();
+    setCurrentSlide((prev) => (prev + 1) % totalSlides);
+  };
+
+  const prevSlide = (e) => {
+    e.stopPropagation();
+    setCurrentSlide((prev) => (prev - 1 + totalSlides) % totalSlides);
+  };
+
+  const handleAddToCart = () => {
+    addToCart(product, selectedSize, quantity);
+    setIsAdded(true);
+    addToast(`${product.name} added to cart!`, 'success');
+    setTimeout(() => setIsAdded(false), 1500);
+  };
+
+  const handleWhatsAppOrder = () => {
+    if (!isAuthenticated) {
+      addToast('Please login first to order', 'error');
+      if (onRequireAuth) onRequireAuth('login');
+      return;
+    }
+
+    const qty = parseInt(quantity) || 1;
+    const message = `Hello RRV INTRA STYLE,\nI want to order:\n• Product: ${product.name}\n• Size: ${selectedSize}\n• Quantity: ${qty}\n• Price: ₹${product.price * qty}`;
+
+    // Add to history
+    addOrder({
+      product: product.name,
+      size: selectedSize,
+      qty: qty,
+      price: product.price * qty,
+      time: new Date().toLocaleString()
+    });
+
+    const url = `https://wa.me/${STORE_PHONE}?text=${encodeURIComponent(message)}`;
+    window.open(url, '_blank');
+    addToast('Opening WhatsApp for your order...', 'info');
+  };
+
+  return (
+    <div className="product-card">
+      {/* IMAGE SLIDER */}
+      <div className="slider-wrapper">
+        <div className="slider-image-box">
+          <img
+            src={product.images[currentSlide]}
+            alt={`${product.name} image ${currentSlide + 1}`}
+            className="slider-image"
+            loading="lazy"
+          />
+        </div>
+
+        {totalSlides > 1 && (
+          <>
+            <button className="slider-arrow prev" onClick={prevSlide} aria-label="Previous image">
+              <ChevronLeft size={18} />
+            </button>
+            <button className="slider-arrow next" onClick={nextSlide} aria-label="Next image">
+              <ChevronRight size={18} />
+            </button>
+            <div className="slider-dots">
+              {product.images.map((_, idx) => (
+                <span
+                  key={idx}
+                  className={`dot ${idx === currentSlide ? 'active' : ''}`}
+                  onClick={() => setCurrentSlide(idx)}
+                />
+              ))}
+            </div>
+          </>
+        )}
+      </div>
+
+      {/* PRODUCT DETAILS */}
+      <div className="product-details">
+        <h3 className="product-title" title={product.name}>
+          {product.name}
+        </h3>
+        <p className="product-price">₹{product.price.toLocaleString('en-IN')}</p>
+
+        {/* CONTROLS (SIZE & QUANTITY) */}
+        <div className="product-controls">
+          <div className="control-group">
+            <label className="control-label">Size</label>
+            <select
+              className="product-select"
+              value={selectedSize}
+              onChange={(e) => setSelectedSize(e.target.value)}
+            >
+              {product.sizes.map((s) => (
+                <option key={s} value={s}>
+                  {s}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="control-group">
+            <label className="control-label">Qty</label>
+            <input
+              type="number"
+              min="1"
+              max="99"
+              value={quantity}
+              onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
+              className="product-qty-input"
+            />
+          </div>
+        </div>
+
+        {/* ACTION BUTTONS */}
+        <div className="product-actions">
+          <button
+            className={`btn-add-cart ${isAdded ? 'added' : ''}`}
+            onClick={handleAddToCart}
+          >
+            {isAdded ? (
+              <>
+                <Check size={16} />
+                <span>Added</span>
+              </>
+            ) : (
+              <>
+                <ShoppingCart size={16} />
+                <span>Add To Cart</span>
+              </>
+            )}
+          </button>
+
+          <button className="btn-order-wa" onClick={handleWhatsAppOrder}>
+            <MessageCircle size={16} />
+            <span>Order on WhatsApp</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}

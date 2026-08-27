@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RRV INTRA_STYLE</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+<header>
+
+  <!-- LEFT SIDE -->
+  <div class="left-section">
+
+    <img src="logo.jpeg" class="logo">
+
+    <img src="logo1.jpg" class="banner">
+
+  </div>
+
+
+
+  <!-- RIGHT SIDE -->
+  <div class="right-section">
+
+    <a href="cart.html" class="cart-btn">
+      🛒 Cart
+    </a>
+
+
+    <div class="menu-container">
+
+      <button class="menu-btn" onclick="toggleMenu()">
+        ⋮
+      </button>
+
+
+      <div id="dropdown" class="dropdown">
+
+        <p id="userName" class="user-name"></p>
+
+        <a href="login.html" id="loginLink">
+          Login
+        </a>
+
+        <a href="signup.html" id="signupLink">
+          Signup
+        </a>
+
+        <a href="#" onclick="logout()" id="logoutLink" style="display:none;">
+          Logout
+        </a>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</header>
+
+<div class="products">
+
+<!-- PRODUCT 1 -->
+<div class="card">
+  <div class="slider" id="slider1">
+    <div class="slides">
+      <img src="Led heart chusion.jpeg" class="slide active">
+      <img src="led heart chusion1.jpeg" class="slide">
+    </div>
+    <span class="prev" onclick="changeSlide('slider1', -1)">❮</span>
+    <span class="next" onclick="changeSlide('slider1', 1)">❯</span>
+  </div>
+  <h4>Led Heart Cushion</h4>
+  <p class="price">₹599</p>
+  <select id="s1"><option>16x16</option></select>
+  <input id="q1" type="number" placeholder="Quantity">
+  <button onclick="addToCart('Led Heart Cushion',599)">
+  Add To Cart
+</button>
+  <button onclick="order('Led Heart Cushion','s1','q1')">Order on WhatsApp</button>
+</div>
+
+<!-- PRODUCT 2 -->
+<div class="card">
+  <div class="slider" id="slider2">
+    <div class="slides">
+      <img src="coushion.jpeg" class="slide active">
+      <img src="coushion1.jpeg" class="slide">
+      <img src="coushion2.jpeg" class="slide">
+      <img src="coushion4.jpeg" class="slide">
+    </div>
+    <span class="prev" onclick="changeSlide('slider2', -1)">❮</span>
+    <span class="next" onclick="changeSlide('slider2', 1)">❯</span>
+  </div>
+  <h4>leaser Coushion</h4>
+  <p class="price">₹899</p>
+  <select id="s2">
+    <option>16x16</option>
+  </select>
+  <input id="q2" type="number" placeholder="Quantity">
+  <button onclick="addToCart('leaser Coushion',899)">
+  Add To Cart
+</button>
+  <button onclick="order('leeaser Coushion','s2','q2')">Order on WhatsApp</button>
+</div>
+
+<!-- PRODUCT 3 -->
+<div class="card">
+  <div class="slider" id="slider3">
+    <div class="slides">
+      <img src="led night lamp.jpeg" class="slide active">
+      <img src="led night lamp1.jpeg" class="slide">
+      <img src="led night lamp2.jpeg" class="slide">
+    </div>
+    <span class="prev" onclick="changeSlide('slider3', -1)">❮</span>
+    <span class="next" onclick="changeSlide('slider3', 1)">❯</span>
+  </div>
+  <h4>Led Night Lamp</h4>
+  <p class="price">₹799</p>
+  <select id="s3"><option>4x6</option></select>
+  <input id="q3" type="number" placeholder="Quantity">
+  <button onclick="addToCart('Led Night Lamp',799)">
+  Add To Cart
+</button>
+  <button onclick="order('Led Night Lamp','s3','q3')">Order on WhatsApp</button>
+</div>
+
+<!-- PRODUCT 4 -->
+<div class="card">
+  <div class="slider" id="slider4">
+    <div class="slides">
+      <img src="led photo lamp.jpeg" class="slide active">
+      <img src="led photo lamp1.jpeg" class="slide">
+      <img src="led photo lamp2.jpeg" class="slide">
+    </div>
+    <span class="prev" onclick="changeSlide('slider4', -1)">❮</span>
+    <span class="next" onclick="changeSlide('slider4', 1)">❯</span>
+  </div>
+  <h4>Led Photo Lamp</h4>
+  <p class="price">₹999</p>
+  <select id="s4"><option>6x6 inch</option></select>
+  <input id="q4" type="number" placeholder="Quantity">
+  <button onclick="addToCart('Led Photo Lamp',999)">
+  Add To Cart
+</button>
+  <button onclick="order('Led Photo Lamp','s4','q4')">Order on WhatsApp</button>
+</div>
+
+<!-- PRODUCT 5 -->
+<div class="card">
+  <div class="slider" id="slider5">
+    <div class="slides">
+      <img src="led rotating lamp.jpeg" class="slide active">
+      <img src="led rotating lamp1.jpeg" class="slide">
+    </div>
+    <span class="prev" onclick="changeSlide('slider5', -1)">❮</span>
+    <span class="next" onclick="changeSlide('slider5', 1)">❯</span>
+  </div>
+  <h4>Pentogonal Lamp</h4>
+  <p class="price">₹1199</p>
+  <select id="s5"><option>7x7 inch</option></select>
+  <input id="q5" type="number" placeholder="Quantity">
+  <button onclick="addToCart('Pentogonal Lamp',1199)">
+  Add To Cart
+</button>
+  <button onclick="order('Pentagonal Lamp','s5','q5')">Order on WhatsApp</button>
+</div>
+
+<!-- PRODUCT 6 -->
+<div class="card">
+  <div class="slider" id="slider6">
+    <div class="slides">
+      <img src="magic cup.jpeg" class="slide active">
+      <img src="magic cup1.jpeg" class="slide">
+      <img src="magic cup2.jpeg" class="slide">
+      <img src="magic cup3.jpeg" class="slide">
+    </div>
+    <span class="prev" onclick="changeSlide('slider6', -1)">❮</span>
+    <span class="next" onclick="changeSlide('slider6', 1)">❯</span>
+  </div>
+  <h4>Glitter heart handle Magic Cup</h4>
+  <p class="price">₹649</p>
+  <select id="s6"><option>O six</option></select>
+  <input id="q6" type="number" placeholder="Quantity">
+  <button onclick="addToCart('Glitter heart handle Magic Cup',649)">
+  Add To Cart
+</button>
+  <button onclick="order('Glitter heart handle Magic Cup','s6','q6')">Order on WhatsApp</button>
+</div>
+
+<!-- PRODUCT 7 -->
+<div class="card">
+  <div class="slider" id="slider7">
+    <div class="slides">
+      <img src="personalized bedseet set.jpeg" class="slide active">
+      <img src="personalized bedseet set1.jpeg" class="slide">
+      <img src="personalized bedseet set2.jpeg" class="slide">
+    </div>
+    <span class="prev" onclick="changeSlide('slider7', -1)">❮</span>
+    <span class="next" onclick="changeSlide('slider7', 1)">❯</span>
+  </div>
+  <h4>Personalized Double Bed Bedseet Set</h4>
+  <p class="price">₹2449</p>
+  <select id="s7"><option>King Size</option></select>
+  <input id="q7" type="number" placeholder="Quantity">
+  <button onclick="addToCart('Personalized Double Bed Bedseet Set',2449)">
+  Add To Cart
+</button>
+  <button onclick="order('Personalized Double Bed Bedseet Set','s7','q7')">Order on WhatsApp</button>
+</div>
+
+<!-- PRODUCT 8 -->
+<div class="card">
+  <div class="slider" id="slider8">
+    <div class="slides">
+      <img src="poloried photo.jpeg" class="slide active">
+      <img src="poloried photo1.jpeg" class="slide">
+      <img src="poloried photo2.jpeg" class="slide">
+      <img src="poloried photo3.jpeg" class="slide">
+    </div>
+    <span class="prev" onclick="changeSlide('slider8', -1)">❮</span>
+    <span class="next" onclick="changeSlide('slider8', 1)">❯</span>
+  </div>
+  <h4>Poloried Photo</h4>
+  <p class="price">₹249</p>
+  <select id="s8"><option>9x6 cm </option></select>
+  <input id="q8" type="number" placeholder="Quantity">
+  <button onclick="addToCart('Poloried Photo',249)">
+  Add To Cart
+</button>
+  <button onclick="order('Poloried Photo','s8','q8')">Order on WhatsApp</button>
+</div>
+
+<!-- PRODUCT 9 -->
+<div class="card">
+  <div class="slider" id="slider9">
+    <div class="slides">
+      <img src="round revolvinng lamp.jpeg" class="slide active">
+      <img src="round revolving lamp1.jpeg" class="slide">
+      <img src="round revolving lamp2.jpeg" class="slide">
+    </div>
+    <span class="prev" onclick="changeSlide('slider9', -1)">❮</span>
+    <span class="next" onclick="changeSlide('slider9', 1)">❯</span>
+  </div>
+  <h4>Round Revolving Lamp</h4>
+  <p class="price">₹999</p>
+  <select id="s9"><option>6x6</option></select>
+  <input id="q9" type="number" placeholder="Quantity">
+  <button onclick="addToCart('Round Revolving Lamp',999)">
+  Add To Cart
+</button>
+  <button onclick="order('Round Revolving Lamp','s9','q9')">Order on WhatsApp</button>
+</div>
+
+<!-- PRODUCT 10 -->
+<div class="card">
+  <div class="slider" id="slider10">
+    <div class="slides">
+      <img src="scalp massager.jpeg" class="slide active">
+      <img src="scalp massager1.jpeg" class="slide">
+      <img src="scalp massager2.jpeg" class="slide">
+    </div>
+    <span class="prev" onclick="changeSlide('slider10', -1)">❮</span>
+    <span class="next" onclick="changeSlide('slider10', 1)">❯</span>
+  </div>
+  <h4>Scalp Massager</h4>
+  <p class="price">₹99</p>
+  <select id="s10"><option>Free Size</option></select>
+  <input id="q10" type="number" placeholder="Quantity">
+  <button onclick="addToCart('Scalp Massager',99)">
+  Add To Cart
+</button>
+  <button onclick="order('Scalp Massager','s10','q10')">Order on WhatsApp</button>
+</div>
+</div>
+<footer class="footer">
+  <div class="footer-container">
+
+    <h2 class="brand">RRV INTRA STYLE</h2>
+    <p class="tagline">Custom Photo Products | Made with Rithik Rajveer❤️</p>
+
+    <div class="footer-grid">
+
+      <!-- Links -->
+      <div>
+        <h4>Quick Links</h4>
+        <a href="#">Home</a>
+        <a href="#">Products</a>
+        <a href="#">Contact</a>
+      </div>
+
+      <!-- Social -->
+      <div>
+        <h4>Follow Us</h4>
+        <a href="mailto:rrvintrastyle@gmail.com">📧 Gmail</a>
+        <a href="https://www.instagram.com/rrv_intrastyle" target="_blank">📸 Instagram</a>
+        <a href="https://www.facebook.com/share/1AmKdLiUGo/" target="_blank">📘 Facebook</a>
+      </div>
+      <!-- Contact -->
+      <div>
+        <h4>Contact</h4>
+        <p>📞 9708810843</p>
+        <p>📍 Ram Nagar, Masaurhi (Patna)</p>
+      </div>
+
+    </div>
+
+    <div class="footer-bottom">
+      © 2026 RRV INTRA STYLE | Designed with SUVM💖
+    </div>
+
+  </div>
+</footer>
+<script src="script.js"></script>
+<script type="module" src="auth.js"></script>
+
+</body>
+</html>
