@@ -331,7 +331,7 @@ export default function AdminProductModal() {
                 <KeyRound size={18} className="field-icon" />
                 <input
                   type="password"
-                  placeholder="Enter owner PIN (e.g. 7677)"
+                  placeholder="Enter owner password (Subham@7677)"
                   value={pinInput}
                   onChange={(e) => setPinInput(e.target.value)}
                   className="form-input"
@@ -339,7 +339,7 @@ export default function AdminProductModal() {
                 />
               </div>
               <span style={{ fontSize: '11px', color: '#94a3b8', marginTop: '4px' }}>
-                Tip: Signing in with owner email (rrvintrastyle@gmail.com / subham7677@gmail.com) also grants instant access.
+                Tip: Signing in with owner email (subhamrajbholu@gmail.com) also grants instant access.
               </span>
             </div>
 
