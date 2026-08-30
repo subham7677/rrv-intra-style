@@ -7,6 +7,8 @@ import {
   sendPasswordResetEmail,
   onAuthStateChanged
 } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
+import { getStorage } from "firebase/storage";
 
 // 🔥 FIREBASE CONFIG
 const firebaseConfig = {
@@ -22,6 +24,8 @@ const firebaseConfig = {
 // 🔥 INITIALIZE FIREBASE
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
+export const db = getFirestore(app);
+export const storage = getStorage(app);
 
 export {
   createUserWithEmailAndPassword,

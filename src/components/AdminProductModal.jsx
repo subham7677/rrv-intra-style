@@ -227,7 +227,7 @@ export default function AdminProductModal() {
     return Object.keys(errs).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!validateForm()) {
@@ -254,28 +254,39 @@ export default function AdminProductModal() {
       rating: Number(rating)
     };
 
-    if (editingId) {
-      updateProduct(editingId, productPayload);
-      addToast(`"${productPayload.name}" updated successfully!`, 'success');
-    } else {
-      addProduct(productPayload);
-      addToast(`"${productPayload.name}" added to catalog!`, 'success');
-    }
-
-    resetForm();
-  };
-
-  const handleDelete = (id, prodName) => {
-    deleteProduct(id);
-    setDeleteConfirmId(null);
-    addToast(`"${prodName}" deleted from catalog`, 'info');
-  };
-
-  const handleResetCatalog = () => {
-    if (window.confirm('Reset all products to the default 10 catalog items? Custom additions will be replaced.')) {
-      resetToDefaultProducts();
-      addToast('Product catalog reset to default items', 'info');
+    try {
+      if (editingId) {
+        await updateProduct(editingId, productPayload);
+        addToast(`"${productPayload.name}" updated for all customers!`, 'success');
+      } else {
+        await addProduct(productPayload);
+        addToast(`"${productPayload.name}" published for all customers!`, 'success');
+      }
       resetForm();
+    } catch (err) {
+      addToast(err.message || 'Could not publish product for customers', 'error');
+    }
+  };
+
+  const handleDelete = async (id, prodName) => {
+    try {
+      await deleteProduct(id);
+      setDeleteConfirmId(null);
+      addToast(`"${prodName}" deleted from catalog`, 'info');
+    } catch (err) {
+      addToast(err.message || 'Could not delete product for all customers', 'error');
+    }
+  };
+
+  const handleResetCatalog = async () => {
+    if (window.confirm('Reset all products to the default 10 catalog items? Custom additions will be replaced.')) {
+      try {
+        await resetToDefaultProducts();
+        addToast('Product catalog reset to default items', 'info');
+        resetForm();
+      } catch (err) {
+        addToast(err.message || 'Could not reset catalog for all customers', 'error');
+      }
     }
   };
 
@@ -534,7 +545,7 @@ export default function AdminProductModal() {
             <div className="form-scroll-content">
               <div className="form-section-banner">
                 <h4>{editingId ? 'Edit Product Details' : 'Create New Product'}</h4>
-                <p>Fill out the required information below. Changes will sync immediately to the product catalog.</p>
+                <p>Fill out the required information below. Saving publishes the product to every customer, not only this device.</p>
               </div>
 
               <div className="admin-form-grid">
