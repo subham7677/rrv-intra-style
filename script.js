@@ -108,41 +108,34 @@ function addToCart(product, price){
 
 // SHOW CART
 function showCart(){
-
   let cartBox = document.getElementById("cartItems");
-
-  let total = 0;
-
   if(!cartBox) return;
-
-
+  cartBox.innerHTML = '';
+  let total = 0;
   cart.forEach((item,index)=>{
-
     total += item.price;
-
     cartBox.innerHTML += `
-
       <div class="card">
-
         <h3>${item.product}</h3>
-
         <p>₹${item.price}</p>
-
-        <button onclick="removeCart(${index})">
-          Remove
-        </button>
-
-      </div>
-
-    `;
-
+        <button onclick="removeCart(${index})">Remove</button>
+      </div>`;
   });
-
-
-  document.getElementById("totalPrice").innerText =
-    "Total: ₹" + total;
-
+  document.getElementById("totalPrice").innerText = "Total: ₹" + total;
 }
+
+// Attach add-to-cart button listeners
+document.querySelectorAll('.add-to-cart').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const product = btn.getAttribute('data-product');
+    const price = parseFloat(btn.getAttribute('data-price'))||0;
+    if(product){
+      addToCart(product, price);
+    } else {
+      console.warn('Add to cart button missing data-product attribute');
+    }
+  });
+});
 
 
 // REMOVE CART ITEM
