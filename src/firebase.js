@@ -1,16 +1,8 @@
 import { initializeApp } from "firebase/app";
-import {
-  getAuth,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  signOut,
-  sendPasswordResetEmail,
-  onAuthStateChanged
-} from "firebase/auth";
+import { getAnalytics } from "firebase/analytics";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
-// 🔥 FIREBASE CONFIG
 const firebaseConfig = {
   apiKey: "AIzaSyDpJo1gj-88BOMAQjcdAIux0FLMqjFjPVQ",
   authDomain: "rrv-login.firebaseapp.com",
@@ -21,18 +13,7 @@ const firebaseConfig = {
   measurementId: "G-XQ5TWPTSE9"
 };
 
-// 🔥 INITIALIZE FIREBASE
 const app = initializeApp(firebaseConfig);
-export const auth = getAuth(app);
 export const db = getFirestore(app);
 export const storage = getStorage(app);
-
-export {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  signOut,
-  sendPasswordResetEmail,
-  onAuthStateChanged
-};
-
-export default app;
+export const analytics = getAnalytics(app);
